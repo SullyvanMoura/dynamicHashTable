@@ -16,7 +16,7 @@ int set_hash_created(int created) {
     FILE *f;
 
     if ((f = fopen(FILE_PATH_METADATA, "rb+")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método set_hash_created\n");
         exit(1);
     }
 
@@ -31,7 +31,7 @@ int get_hash_created() {
     FILE *f;
 
     if ((f = fopen(FILE_PATH_METADATA, "rb")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método get_hash_created\n");
         exit(1);
     }
 
@@ -50,7 +50,7 @@ int set_m(int m) {
     FILE *f;
 
     if ((f = fopen(FILE_PATH_METADATA, "rb+")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método set_m\n");
         exit(1);
     }
 
@@ -65,7 +65,7 @@ int get_m() {
     FILE *f;
 
     if ((f = fopen(FILE_PATH_METADATA, "rb")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método get_m\n");
         exit(1);
     }
 
@@ -84,7 +84,7 @@ int set_l(int l) {
     FILE *f;
 
     if ((f = fopen(FILE_PATH_METADATA, "rb+")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método set_l\n");
         exit(1);
     }
 
@@ -99,7 +99,7 @@ int get_l() {
     FILE *f;
 
     if ((f = fopen(FILE_PATH_METADATA, "rb")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método get_l\n");
         exit(1);
     }
 
@@ -118,7 +118,7 @@ int set_p(int p) {
     FILE *f;
 
     if ((f = fopen(FILE_PATH_METADATA, "rb+")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método set_p\n");
         exit(1);
     }
 
@@ -133,7 +133,7 @@ int get_p() {
     FILE *f;
 
     if ((f = fopen(FILE_PATH_METADATA, "rb")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método get_p\n");
         exit(1);
     }
 
@@ -152,7 +152,7 @@ int set_old_m(int old_m) {
     FILE *f;
 
     if ((f = fopen(FILE_PATH_METADATA, "rb+")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método set_old_m\n");
         exit(1);
     }
 
@@ -167,7 +167,7 @@ int get_old_m() {
     FILE *f;
 
     if ((f = fopen(FILE_PATH_METADATA, "rb")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método get_old_l\n");
         exit(1);
     }
 

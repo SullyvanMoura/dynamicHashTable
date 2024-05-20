@@ -10,6 +10,20 @@ int hash(int x, int m, int l) {
     return x % (int) (m*pow(2, l));
 }
 
+void create_costumers_file() {
+
+    FILE *f;
+
+    if ((f = fopen(FILE_PATH_CUSTOMERS, "w")) == NULL) {
+        printf("Erro ao abrir arquivo no método print_list\n");
+        exit(1);
+    }
+
+    printf("Customers file created!\n");
+
+    fclose(f);
+}
+
 Customer *new_customer(int cod, char *name) {
 
     Customer *c = (Customer *) malloc(sizeof(Customer));
@@ -41,7 +55,7 @@ void print_list(int index_in_file) {
     Customer *c;
 
     if ((f = fopen(FILE_PATH_CUSTOMERS, "rb+")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método print_list\n");
         exit(1);
     }
 
@@ -88,7 +102,7 @@ int insert_customer(Customer *c, int index_in_file) {
     FILE *f;
 
     if ((f = fopen(FILE_PATH_CUSTOMERS, "rb+")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método insert_customer\n");
         exit(1);
     }
 
@@ -163,7 +177,7 @@ int last_index_stored() {
     FILE *f;
 
     if ((f = fopen(FILE_PATH_CUSTOMERS, "rb")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método last_index_stored\n");
         exit(1);
     }
 
@@ -182,7 +196,7 @@ int count_records() {
     int count = 0;
 
     if ((f = fopen(FILE_PATH_CUSTOMERS, "rb")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método count_records\n");
         exit(1);
     }
 
@@ -199,7 +213,7 @@ void reorgazine_expanded_list(int lst_idx, int actual_hash_idx) {
     FILE *f;
 
     if ((f = fopen(FILE_PATH_CUSTOMERS, "rb+")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método reorgazine_expanded_list\n");
         exit(1);
     }
 

@@ -28,17 +28,19 @@ int needs_expand() {
     return 0;
 }
 
-void createTable(int m) {  
+void create_table(int m) {  
 
     if (get_hash_created() == 1) {
 
         return;
     }
 
+    create_costumers_file();
+
     FILE *f;
 
     if ((f = fopen(FILE_PATH_HASH, "wb")) == NULL) {
-        printf("Erro ao abrir arquivo\n");
+        printf("Erro ao abrir arquivo no método create_table\n");
         exit(1);
     }
 
@@ -205,7 +207,7 @@ void print_hash_table() {
 
 int main() {
 
-    createTable(5);
+    create_table(5);
 
     //expand_table();
     // expand_table();

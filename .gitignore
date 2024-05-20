@@ -58,3 +58,4 @@ main
 
 # exclude everything
 files/*.dat
+!files/metadata.dat
