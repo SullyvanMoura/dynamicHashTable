@@ -9,11 +9,6 @@
 
 float max_load_factor = 2.0;
 
-int hash(int x, int m, int l) {
-
-    return x % (int) (m*pow(2, l));
-}
-
 float load_factor(int m) {
 
     int records_count = count_records();
@@ -119,11 +114,11 @@ int get_hash_value_from_key(int key) {
     return value;
 }
 
-void expand_list(int index) {
+void expand_list(int hash_index) {
 
-    int list_index = get_hash_value_from_key(index);
+    int list_index = get_hash_value_from_key(hash_index);
 
-    
+    reorgazine_expanded_list(list_index, hash_index);
 }
 
 void expand_table() {
@@ -138,8 +133,6 @@ void expand_table() {
         exit(1);
     }
 
-    expand_list(get_p());
-
     //Adiciona novo espaço vazio
     int void_space_value = -1;
     set_m(get_m() + 1);
@@ -147,6 +140,9 @@ void expand_table() {
     rewind(f);
     fseek(f, 0, SEEK_END);
     fwrite(&void_space_value, sizeof(int), 1, f);
+
+    //Reorganiza lista que está sendo expandida
+    expand_list(get_p());
 
     //Avança o P ou retorna ao início da tabela
     if (get_p() + 1 == get_old_m())
@@ -160,7 +156,14 @@ void expand_table() {
 void insert_customer_in_hash_table(Customer *c) {
 
     int cod = c->cod;
+    
     int pos = hash(cod, get_m(), get_l());
+
+    if (pos < get_p()) {
+
+        pos = hash(cod, get_m(), get_l() + 1);
+    }
+
     int value_in_hash_table = get_hash_value_from_key(pos);
 
     if (value_in_hash_table != -1) {
@@ -202,37 +205,43 @@ void print_hash_table() {
 
 int main() {
 
-    createTable(7);
+    createTable(5);
 
-    Customer *c1 = new_customer(49, "JOAO");
+    //expand_table();
+    // expand_table();
+    // expand_table();
+    // expand_table();
+    // expand_table();
+
+    Customer *c1 = new_customer(50, "JOAO");
     insert_customer_in_hash_table(c1);
     free(c1);
 
-    read_integers_from_table();
+    //read_integers_from_table();
 
-    Customer *c2 = new_customer(51, "CARLA");
+    Customer *c2 = new_customer(55, "CARLA");
     insert_customer_in_hash_table(c2);
     free(c2);
 
-    read_integers_from_table();
+    //read_integers_from_table();
 
     Customer *c3 = new_customer(59, "MARIA");
     insert_customer_in_hash_table(c3);
     free(c3);
 
-    read_integers_from_table();
+    //read_integers_from_table();
     
     Customer *c4 = new_customer(3, "JOSE");
-    insert_customer_in_hash_table(c4);
+    //insert_customer_in_hash_table(c4);
     free(c4);
 
-    read_integers_from_table();
+    //read_integers_from_table();
 
     Customer *c5 = new_customer(87, "BIA");
     insert_customer_in_hash_table(c5);
     free(c5);
 
-    read_integers_from_table();
+    //read_integers_from_table();
 
     Customer *c6 = new_customer(103, "ANA");
     insert_customer_in_hash_table(c6);

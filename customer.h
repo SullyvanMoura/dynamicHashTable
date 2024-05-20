@@ -12,6 +12,8 @@ struct Customer
 };
 typedef struct Customer Customer;
 
+int hash(int x, int m, int l);
+
 Customer *new_customer(int cod, char *name) ;
 
 void print_list(int index_in_file);
@@ -25,5 +27,7 @@ int insert_customer(Customer *c, int initial_position);
 int last_index_stored();
 
 int count_records();
+
+void reorgazine_expanded_list(int lst_idx, int actual_hash_idx);
 
 #endif

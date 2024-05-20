@@ -5,6 +5,11 @@
 
 #define FILE_PATH_CUSTOMERS "./files/customers.dat"
 
+int hash(int x, int m, int l) {
+
+    return x % (int) (m*pow(2, l));
+}
+
 Customer *new_customer(int cod, char *name) {
 
     Customer *c = (Customer *) malloc(sizeof(Customer));
@@ -187,6 +192,27 @@ int count_records() {
     fclose(f);
 
     return count;
+}
+
+void reorgazine_expanded_list(int lst_idx, int actual_hash_idx) {
+
+    FILE *f;
+
+    if ((f = fopen(FILE_PATH_CUSTOMERS, "rb+")) == NULL) {
+        printf("Erro ao abrir arquivo\n");
+        exit(1);
+    }
+
+    for (Customer *c = read_customer(lst_idx, f); c != NULL; c = read_customer(c->next, f)) {
+
+        //print_customer(c);
+
+        //*last_position_read = (ftell(f)/customer_size_in_bytes()) - 1;
+        free(c);
+    }
+
+    fclose(f);
+
 }
 
 int test() {
