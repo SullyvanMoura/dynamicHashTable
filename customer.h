@@ -12,7 +12,9 @@ struct Customer
 };
 typedef struct Customer Customer;
 
-int hash(int x, int m, int l);
+void create_costumers_file();
+
+#define FILE_PATH_CUSTOMERS "./files/customers.dat"
 
 Customer *new_customer(int cod, char *name) ;
 
@@ -27,7 +29,5 @@ int insert_customer(Customer *c, int initial_position);
 int last_index_stored();
 
 int count_records();
-
-void reorgazine_expanded_list(int lst_idx, int actual_hash_idx);
 
 #endif

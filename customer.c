@@ -2,13 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "customer.h"
-
-#define FILE_PATH_CUSTOMERS "./files/customers.dat"
-
-int hash(int x, int m, int l) {
-
-    return x % (int) (m*pow(2, l));
-}
+#include "metadata_manager.h"
 
 void create_costumers_file() {
 
@@ -206,27 +200,6 @@ int count_records() {
     fclose(f);
 
     return count;
-}
-
-void reorgazine_expanded_list(int lst_idx, int actual_hash_idx) {
-
-    FILE *f;
-
-    if ((f = fopen(FILE_PATH_CUSTOMERS, "rb+")) == NULL) {
-        printf("Erro ao abrir arquivo no método reorgazine_expanded_list\n");
-        exit(1);
-    }
-
-    for (Customer *c = read_customer(lst_idx, f); c != NULL; c = read_customer(c->next, f)) {
-
-        //print_customer(c);
-
-        //*last_position_read = (ftell(f)/customer_size_in_bytes()) - 1;
-        free(c);
-    }
-
-    fclose(f);
-
 }
 
 int test() {

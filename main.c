@@ -7,7 +7,14 @@
 
 #define FILE_PATH_HASH "./files/hash.dat"
 
-float max_load_factor = 2.0;
+void print_hash_table();
+
+float max_load_factor = 1.2;
+
+int hash(int x, int m, int l) {
+
+    return x % (int) (m*pow(2, l));
+}
 
 float load_factor(int m) {
 
@@ -120,7 +127,81 @@ void expand_list(int hash_index) {
 
     int list_index = get_hash_value_from_key(hash_index);
 
-    reorgazine_expanded_list(list_index, hash_index);
+    if (list_index == -1) {
+
+        return;
+    }
+
+    FILE *f;
+
+    if ((f = fopen(FILE_PATH_CUSTOMERS, "rb+")) == NULL) {
+        printf("Erro ao abrir arquivo no método reorgazine_expanded_list\n");
+        exit(1);
+    }
+
+    int next_customer_index_in_file = -1;
+    int actual_customer_index_in_file = list_index;
+    int is_first = 1;
+
+    for (Customer *c = read_customer(list_index, f); c != NULL; c = read_customer(next_customer_index_in_file, f)) {
+        
+        next_customer_index_in_file = c->next;
+
+        int new_hash_pos = hash(c->cod, get_old_m(), get_l() + 1);
+
+        if (new_hash_pos != hash_index) {
+
+            int value_from_new_space = get_hash_value_from_key(new_hash_pos);
+
+            if (is_first) {
+
+                //move o próximo da lista para a primeira posição da lista
+                insert_value_in_table(c->next, hash_index);
+            } else {
+                
+                //Volta para atualizar o ponteiro do customer anterior e aprontar para o próximo
+                fseek(f, -customer_size_in_bytes() - sizeof(int), SEEK_CUR);
+                fwrite(&c->next, sizeof(int), 1, f);
+                fflush(f);
+
+                //avança o ponteiro para o final do customer atual (para não quebrar o código logo ali na frente)
+                fseek(f, customer_size_in_bytes(), SEEK_CUR);
+            }
+
+            if (value_from_new_space == -1) {
+                
+                int value = -1;
+
+                //move atual pra nova posição
+                insert_value_in_table(actual_customer_index_in_file, new_hash_pos);
+
+                //aproveita a posição final do read_customer pra atualizar o ponteiro do que foi movido
+                fseek(f, -sizeof(int), SEEK_CUR);
+                fwrite(&value, sizeof(int), 1, f);
+                fflush(f);
+            } else {
+
+                for (Customer *c2 = read_customer(value_from_new_space, f); c2 != NULL; c = read_customer(c2->next, f)) {
+                //TODO
+
+                    if (c2->next == -1) {
+
+                        fseek(f, -sizeof(int), SEEK_CUR);
+                        fwrite(&actual_customer_index_in_file, sizeof(int), 1, f);
+                        fflush(f);
+                        free(c2);
+                        break;
+                    }
+                }
+            }
+        }
+
+        is_first = 0;
+        actual_customer_index_in_file = next_customer_index_in_file;
+        free(c);
+    }
+
+    fclose(f);
 }
 
 void expand_table() {
@@ -128,7 +209,9 @@ void expand_table() {
     FILE *f;
     int n;
 
-    printf("Expand!!!\n");
+    printf("load factor = %f. ", load_factor(get_m()));
+
+    printf("Expanding p = %d\n", get_p());
 
     if ((f = fopen(FILE_PATH_HASH, "rb+")) == NULL) {
         printf("Erro ao abrir arquivo\n");
@@ -139,16 +222,21 @@ void expand_table() {
     int void_space_value = -1;
     set_m(get_m() + 1);
 
-    rewind(f);
     fseek(f, 0, SEEK_END);
     fwrite(&void_space_value, sizeof(int), 1, f);
+
+    //Tive que colocar pq tava dando problema :p
+    fflush(f);
 
     //Reorganiza lista que está sendo expandida
     expand_list(get_p());
 
     //Avança o P ou retorna ao início da tabela
-    if (get_p() + 1 == get_old_m())
+    if (get_p() + 1 == get_old_m()){
+
         set_p(0);
+        set_l(get_l() + 1);
+    }
     else
         set_p(get_p() + 1);
 
@@ -157,14 +245,19 @@ void expand_table() {
 
 void insert_customer_in_hash_table(Customer *c) {
 
+    printf("Inserting customer - Cod: %d | Name: %s - ", c->cod, c->name);
+
     int cod = c->cod;
     
-    int pos = hash(cod, get_m(), get_l());
+    int pos = hash(cod, get_old_m(), get_l());
 
     if (pos < get_p()) {
 
-        pos = hash(cod, get_m(), get_l() + 1);
+        pos = hash(cod, get_old_m(), get_l() + 1);
     }
+
+    printf("in position %d! ", pos);
+    printf("(m = %d, p = %d)\n", get_m(), get_p());
 
     int value_in_hash_table = get_hash_value_from_key(pos);
 
@@ -177,9 +270,12 @@ void insert_customer_in_hash_table(Customer *c) {
         insert_value_in_table(list_index, pos);
     }
 
+    print_hash_table();
+
     if (needs_expand()) {
 
         expand_table();
+        print_hash_table();
     }
 }
 
@@ -193,6 +289,7 @@ void print_hash_table() {
         exit(1);
     }
 
+    printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
     for (int i = 0; i < get_m(); i++) {
 
         fread(&n, sizeof(int), 1, f);
@@ -200,14 +297,63 @@ void print_hash_table() {
         printf("%d [%d]", i, n);
         print_list(n);
     }
-
+    printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
     fclose(f);
 }
 
-
 int main() {
 
-    create_table(5);
+    create_table(4);
+
+    Customer *c1 = new_customer(5, "JOAO");
+    insert_customer_in_hash_table(c1);
+    free(c1);
+
+    Customer *c2 = new_customer(6, "PEDRO");
+    insert_customer_in_hash_table(c2);
+    free(c2);
+
+    Customer *c3 = new_customer(3, "MARIA");
+    insert_customer_in_hash_table(c3);
+    free(c3);
+
+    Customer *c4 = new_customer(15, "ANTONIO");
+    insert_customer_in_hash_table(c4);
+    free(c4);
+
+    Customer *c5 = new_customer(4, "ANA");
+    insert_customer_in_hash_table(c5);
+    free(c5);
+
+    Customer *c6 = new_customer(12, "JOSE");
+    insert_customer_in_hash_table(c6);
+    free(c6);
+
+    Customer *c7 = new_customer(10, "BIA");
+    insert_customer_in_hash_table(c7);
+    free(c7);
+
+    Customer *c8 = new_customer(11, "CARLA");
+    insert_customer_in_hash_table(c8);
+    free(c8);
+
+    Customer *c9 = new_customer(8, "CARLOS");
+    insert_customer_in_hash_table(c9);
+    free(c9);
+
+    Customer *c10 = new_customer(23, "RAFAEL");
+    insert_customer_in_hash_table(c10);
+    free(c10);
+
+    Customer *c11 = new_customer(23, "RAFAEL");
+    insert_customer_in_hash_table(c11);
+    free(c11);
+
+    Customer *c12 = new_customer(36, "FATIMA");
+    insert_customer_in_hash_table(c11);
+    free(c12);
+
+    printf("This is the m's value: %d\n", get_m());
 
     //expand_table();
     // expand_table();
@@ -215,58 +361,7 @@ int main() {
     // expand_table();
     // expand_table();
 
-    Customer *c1 = new_customer(50, "JOAO");
-    insert_customer_in_hash_table(c1);
-    free(c1);
-
-    //read_integers_from_table();
-
-    Customer *c2 = new_customer(55, "CARLA");
-    insert_customer_in_hash_table(c2);
-    free(c2);
-
-    //read_integers_from_table();
-
-    Customer *c3 = new_customer(59, "MARIA");
-    insert_customer_in_hash_table(c3);
-    free(c3);
-
-    //read_integers_from_table();
-    
-    Customer *c4 = new_customer(3, "JOSE");
-    //insert_customer_in_hash_table(c4);
-    free(c4);
-
-    //read_integers_from_table();
-
-    Customer *c5 = new_customer(87, "BIA");
-    insert_customer_in_hash_table(c5);
-    free(c5);
-
-    //read_integers_from_table();
-
-    Customer *c6 = new_customer(103, "ANA");
-    insert_customer_in_hash_table(c6);
-    free(c6);
-
-    // Customer *c7 = new_customer(40, "Mary");
-    // insert_customer_in_hash_table(c7, f);
-    // free(c7);
-
-    // Customer *c8 = new_customer(41, "Mia");
-    // insert_customer_in_hash_table(c8, f);
-    // free(c8);
-
-    // Customer *c9 = new_customer(88, "Jonas");
-    // insert_customer_in_hash_table(c9, f);
-    // free(c9);
-
-    // Customer *c10 = new_customer(100, "Baleia");
-    // insert_customer_in_hash_table(c10, f);
-    // free(c10);
-
-    printf("This is the m's value: %d\n", get_m());
-
+    printf("Final table: \n");
     print_hash_table();
 
     printf("Records Count: %d\n", count_records());
