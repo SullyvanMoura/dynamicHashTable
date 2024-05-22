@@ -147,6 +147,11 @@ void expand_list(int hash_index) {
         
         next_customer_index_in_file = c->next;
 
+        if (get_hash_value_from_key(hash_index) == actual_customer_index_in_file) {
+
+            is_first = 1;
+        }
+
         int new_hash_pos = hash(c->cod, get_old_m(), get_l() + 1);
 
         if (new_hash_pos != hash_index) {
@@ -301,9 +306,73 @@ void print_hash_table() {
     fclose(f);
 }
 
-int main() {
+int main_test_1() {
+
+    //Esse é o exercício que ta no slide
+
+    create_table(7);
+    max_load_factor = 1.0;
+
+    Customer *c1 = new_customer(49, "JOAO");
+    insert_customer_in_hash_table(c1);
+    free(c1);
+
+    Customer *c2 = new_customer(51, "CARLA");
+    insert_customer_in_hash_table(c2);
+    free(c2);
+
+    Customer *c3 = new_customer(59, "MARIA");
+    insert_customer_in_hash_table(c3);
+    free(c3);
+
+    Customer *c4 = new_customer(3, "JOSE");
+    insert_customer_in_hash_table(c4);
+    free(c4);
+
+    Customer *c5 = new_customer(87, "BIA");
+    insert_customer_in_hash_table(c5);
+    free(c5);
+
+    Customer *c6 = new_customer(103, "ANA");
+    insert_customer_in_hash_table(c6);
+    free(c6);
+
+    Customer *c7 = new_customer(7, "CARLOS");
+    insert_customer_in_hash_table(c7);
+    free(c7);
+
+    Customer *c8 = new_customer(8, "JOAO");
+    insert_customer_in_hash_table(c8);
+    free(c8);
+
+    Customer *c9 = new_customer(14, "CAROL");
+    insert_customer_in_hash_table(c9);
+    free(c9);
+
+    Customer *c10 = new_customer(15, "PEDRO");
+    insert_customer_in_hash_table(c10);
+    free(c10);
+
+    printf("This is the m's value: %d\n", get_m());
+
+    printf("Final table: \n");
+    print_hash_table();
+
+    printf("Records Count: %d\n", count_records());
+
+    printf("Load Factor: %f\n", load_factor(get_m()));
+
+    printf("M: %d\n", get_m());
+
+    return 0;
+}
+
+int main_test_2() {
+
+    //Esse é o exercício que foi feito em sala antes da prova
 
     create_table(4);
+    max_load_factor = 1.2;
 
     Customer *c1 = new_customer(5, "JOAO");
     insert_customer_in_hash_table(c1);
@@ -364,5 +433,15 @@ int main() {
 
     printf("M: %d\n", get_m());
 
+    return 0;
+}
+
+int main() {
+
+    //Rodar o comando make rm antes trocar entre os teste_1 e teste_2
+    //para apagar os dados e metadados
+
+    main_test_1();
+    //main_test_2();
     return 0;
 }
