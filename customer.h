@@ -18,6 +18,8 @@ void create_costumers_file();
 
 Customer *new_customer(int cod, char *name) ;
 
+int customer_size_in_bytes();
+
 void print_list(int index_in_file);
 
 Customer *find_customer(int cod, int initial_position, int *last_position_read, int *is_first, FILE *f);

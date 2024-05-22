@@ -141,6 +141,7 @@ void expand_list(int hash_index) {
 
     int next_customer_index_in_file = -1;
     int actual_customer_index_in_file = list_index;
+    int last_read_customer_index_in_file = -1;
     int is_first = 1;
 
     for (Customer *c = read_customer(list_index, f); c != NULL; c = read_customer(next_customer_index_in_file, f)) {
@@ -163,14 +164,16 @@ void expand_list(int hash_index) {
                 //move o próximo da lista para a primeira posição da lista
                 insert_value_in_table(c->next, hash_index);
             } else {
-                
+
                 //Volta para atualizar o ponteiro do customer anterior e aprontar para o próximo
-                fseek(f, -customer_size_in_bytes() - sizeof(int), SEEK_CUR);
+                fseek(f, customer_size_in_bytes()*(last_read_customer_index_in_file + 1)- sizeof(int) , SEEK_SET);
                 fwrite(&c->next, sizeof(int), 1, f);
+
                 fflush(f);
 
                 //avança o ponteiro para o final do customer atual (para não quebrar o código logo ali na frente)
-                fseek(f, customer_size_in_bytes(), SEEK_CUR);
+                fseek(f, customer_size_in_bytes()*(actual_customer_index_in_file + 1), SEEK_SET);
+
             }
 
             if (value_from_new_space == -1) {
@@ -202,6 +205,7 @@ void expand_list(int hash_index) {
         }
 
         is_first = 0;
+        last_read_customer_index_in_file = actual_customer_index_in_file;
         actual_customer_index_in_file = next_customer_index_in_file;
         free(c);
     }
@@ -237,7 +241,7 @@ void expand_table() {
     expand_list(get_p());
 
     //Avança o P ou retorna ao início da tabela
-    if (get_p() + 1 == get_old_m()){
+    if (get_p() + 1 == (get_old_m()*pow(2, get_l()))){
 
         set_p(0);
         set_l(get_l() + 1);
@@ -353,16 +357,12 @@ int main_test_1() {
     insert_customer_in_hash_table(c10);
     free(c10);
 
-    printf("This is the m's value: %d\n", get_m());
-
     printf("Final table: \n");
     print_hash_table();
 
     printf("Records Count: %d\n", count_records());
-
-    printf("Load Factor: %f\n", load_factor(get_m()));
-
     printf("M: %d\n", get_m());
+    printf("Load Factor: %f\n", load_factor(get_m()));
 
     return 0;
 }
@@ -422,26 +422,75 @@ int main_test_2() {
     insert_customer_in_hash_table(c11);
     free(c12);
 
-    printf("This is the m's value: %d\n", get_m());
+    printf("Final table: \n");
+    print_hash_table();
+
+    printf("Records Count: %d\n", count_records());
+    printf("M: %d\n", get_m());
+    printf("Load Factor: %f\n", load_factor(get_m()));
+
+    return 0;
+}
+
+int main_test_3() {
+
+    create_table(2);
+    max_load_factor = 1.0;
+
+    Customer *c1 = new_customer(0, "JOAO");
+    insert_customer_in_hash_table(c1);
+    free(c1);
+
+    Customer *c2 = new_customer(2, "PEDRO");
+    insert_customer_in_hash_table(c2);
+    free(c2);
+
+    Customer *c3 = new_customer(4, "MARIA");
+    insert_customer_in_hash_table(c3);
+    free(c3);
+
+    Customer *c4 = new_customer(6, "ANTONIO");
+    insert_customer_in_hash_table(c4);
+    free(c4);
+
+    Customer *c5 = new_customer(8, "ANA");
+    insert_customer_in_hash_table(c5);
+    free(c5);
+
+    Customer *c6 = new_customer(10, "JOSE");
+    insert_customer_in_hash_table(c6);
+    free(c6);
+
+    Customer *c7 = new_customer(12, "BIA");
+    insert_customer_in_hash_table(c7);
+    free(c7);
+
+    Customer *c8 = new_customer(14, "CARLA");
+    insert_customer_in_hash_table(c8);
+    free(c8);
+
+    Customer *c9 = new_customer(200, "CARLOS");
+    insert_customer_in_hash_table(c9);
+    free(c9);
 
     printf("Final table: \n");
     print_hash_table();
 
     printf("Records Count: %d\n", count_records());
-
-    printf("Load Factor: %f\n", load_factor(get_m()));
-
     printf("M: %d\n", get_m());
+    printf("Load Factor: %f\n", load_factor(get_m()));
 
     return 0;
 }
 
 int main() {
 
-    //Rodar o comando make rm antes trocar entre os teste_1 e teste_2
+    //Rodar o comando "make rm" antes trocar entre os teste_1 e teste_2
     //para apagar os dados e metadados
 
     main_test_1();
     //main_test_2();
+    //main_test_3();
+
     return 0;
 }
