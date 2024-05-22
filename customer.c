@@ -79,7 +79,6 @@ Customer *find_customer(int cod, int index_in_file, int *last_position_read, int
 
         *last_position_read = (ftell(f)/customer_size_in_bytes()) - 1;
 
-        //print_customer(c);
         if (c->cod == cod) {
             return c;
         }
@@ -270,17 +269,13 @@ int test() {
     free(c_aux8);
     free(c_aux9);
     free(c_aux10);
-    
-    //Customer *c = read_customer(10);
-    //Customer *c = find_customer(8, 0, NULL, f);
-    //print_customer(c);
 
     return 0;
 }
 
 // int main() {
+    
 //     test();
-//     printf("%d\n", last_index_stored());
 
 //     return 0;
 // }

@@ -355,26 +355,12 @@ int main() {
 
     printf("This is the m's value: %d\n", get_m());
 
-    //expand_table();
-    // expand_table();
-    // expand_table();
-    // expand_table();
-    // expand_table();
-
     printf("Final table: \n");
     print_hash_table();
 
     printf("Records Count: %d\n", count_records());
 
     printf("Load Factor: %f\n", load_factor(get_m()));
-
-    // while (1) {
-    //     printf("Qual valor deseja inserir? ");
-    //     scanf("%d", &value);
-
-    //     insert_customer_in_hash_table(value);
-    //     read_integers_from_table(f);    
-    // }
 
     printf("M: %d\n", get_m());
 
