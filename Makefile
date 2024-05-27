@@ -3,6 +3,21 @@ all: customer.o metadata.o main.o
 	gcc -o main main.o customer.o metadata.o -lm
 	./main
 
+test1: customer.o metadata.o main.o rm
+	clear
+	gcc -o main main.o customer.o metadata.o -lm
+	./main 1
+
+test2: customer.o metadata.o main.o rm
+	clear
+	gcc -o main main.o customer.o metadata.o -lm
+	./main 2
+
+test3: customer.o metadata.o main.o rm
+	clear
+	gcc -o main main.o customer.o metadata.o -lm
+	./main 3
+
 build: customer.o metadata.o main.o
 	gcc -o main main.o customer.o metadata.o
 

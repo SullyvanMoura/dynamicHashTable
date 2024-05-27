@@ -173,11 +173,10 @@ void expand_list(int hash_index) {
 
                 //avança o ponteiro para o final do customer atual (para não quebrar o código logo ali na frente)
                 fseek(f, customer_size_in_bytes()*(actual_customer_index_in_file + 1), SEEK_SET);
-
             }
 
-            if (value_from_new_space == -1) {
-                
+            if (value_from_new_space == -1) { //Caso o novo espaço da hash ainda esteja vazio
+
                 int value = -1;
 
                 //move atual pra nova posição
@@ -187,12 +186,11 @@ void expand_list(int hash_index) {
                 fseek(f, -sizeof(int), SEEK_CUR);
                 fwrite(&value, sizeof(int), 1, f);
                 fflush(f);
-            } else {
+            } else { //Caso o novo espaço da hash já esteja ocupado (ou seja, precisa adicionar no final da lista)
 
                 for (Customer *c2 = read_customer(value_from_new_space, f); c2 != NULL; c = read_customer(c2->next, f)) {
-                //TODO
 
-                    if (c2->next == -1) {
+                    if (c2->next == -1) { //Verifica se é o último da lista para mover o atual para o final
 
                         fseek(f, -sizeof(int), SEEK_CUR);
                         fwrite(&actual_customer_index_in_file, sizeof(int), 1, f);
@@ -265,7 +263,7 @@ void insert_customer_in_hash_table(Customer *c) {
         pos = hash(cod, get_old_m(), get_l() + 1);
     }
 
-    printf("in position %d! ", pos);
+    printf("in position %d ", pos);
     printf("(m = %d, p = %d)\n", get_m(), get_p());
 
     int value_in_hash_table = get_hash_value_from_key(pos);
@@ -483,14 +481,27 @@ int main_test_3() {
     return 0;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
 
-    //Rodar o comando "make rm" antes trocar entre os teste_1 e teste_2
-    //para apagar os dados e metadados
+    printf("Executing test number: %d\n", atoi(argv[1]));
 
-    main_test_1();
-    //main_test_2();
-    //main_test_3();
+    switch (atoi(argv[1])) {
+    case 1: {
+
+        main_test_1();
+        break;
+    } case 2: {
+
+        main_test_2();
+        break;
+    } case 3: {
+
+        main_test_3();
+        break;
+    } default:
+
+        break;
+    }
 
     return 0;
 }
